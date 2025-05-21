@@ -1,4 +1,4 @@
-import {removeIgnoreTaskLitsText, createTaskListText} from '../src/utils'
+import {removeIgnoreTaskLitsText, createTaskListText, hasTaskList} from '../src/utils'
 
 describe('removeIgnoreTaskLitsText', () => {
   it('removes multiple ignore task list from task list text.', () => {
@@ -94,5 +94,42 @@ describe('createTaskListText', () => {
 - [ ] I have made corresponding changes to the documentation
 - [ ] I have added tests that prove my fix is effective or that my feature works
 `)
+  })
+})
+
+describe('hasTaskList', () => {
+  it('Ignores a body with no task list', () => {
+    const text = `## Issue Type
+      Here's some text in the body, but no task list
+    `
+
+    const result = hasTaskList(text)
+
+    expect(result).toEqual(false)
+  })
+
+  it('Identifies a body with at least one completed task in it', () => {
+    const text = `## Issue Type
+    
+    
+    ## Checklist
+    - [x] There's a completed task
+    `
+
+    const result = hasTaskList(text)
+
+    expect(result).toEqual(true)
+  })
+  it('Identifies a body with at least one uncompleted task in it', () => {
+    const text = `## Issue Type
+    
+    
+    ## Checklist
+    - [ ] There's an incomplete task
+    `
+
+    const result = hasTaskList(text)
+
+    expect(result).toEqual(true)
   })
 })
